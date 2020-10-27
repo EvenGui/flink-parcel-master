@@ -8,9 +8,9 @@
 
 最终效果如图
 
-![image-20201022152537012](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022152537012.png)
+![image-20201022152537012](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022152537012.png)
 
-![image-20201022152910241](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022152910241.png)
+![image-20201022152910241](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022152910241.png)
 
 # 源码编译
 
@@ -513,33 +513,33 @@ cp FLINK_ON_YARN-1.10.2.jar  /opt/cloudera/csd/   && cp FLINK-1.10.2-CDH6.3.3-00
 
 ## 开始安装
 
-![image-20201022172400317](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022172400317.png)
+![image-20201022172400317](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022172400317.png)
 
-![image-20201023090550422](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201023090550422.png)
+![image-20201023090550422](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201023090550422.png)
 
 如果集群开启了Kerberos，这里选择勾选，CDH会自动在/var/run/cloudera-scm-agent/process/xxx-flink-FLINK_HISTORY_SERVER下创建flink.keytab文件
 
-![image-20201022172609513](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022172609513.png)
+![image-20201022172609513](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022172609513.png)
 
-![image-20201022173526475](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022173526475.png)
+![image-20201022173526475](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022173526475.png)
 
 根据以下Hive相关配置
 
-![image-20201022173611138](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022173611138.png)
+![image-20201022173611138](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022173611138.png)
 
 
 
-![image-20201022175549145](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022175549145.png)
+![image-20201022175549145](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022175549145.png)
 
 在sql-client中查询hive表时，hive source是自动推断并发的，将table.exec.hive.infer-source-parallelism取消勾选，把hive  source是自动推断并发推导关闭，否则会有以下问题
 
 表文件夹288个
 
-![image-20201023090737358](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201023090737358.png)
+![image-20201023090737358](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201023090737358.png)
 
 自动推导288个并发
 
-![image-20201023090816188](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201023090816188.png)
+![image-20201023090816188](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201023090816188.png)
 
 在CDH上可配置Hive相关的参数
 
@@ -555,7 +555,7 @@ cp FLINK_ON_YARN-1.10.2.jar  /opt/cloudera/csd/   && cp FLINK-1.10.2-CDH6.3.3-00
 
 完成修改配置后，点击重新部署客户端
 
-![image-20201022175759722](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022175759722.png)
+![image-20201022175759722](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022175759722.png)
 
 
 
@@ -563,25 +563,25 @@ cp FLINK_ON_YARN-1.10.2.jar  /opt/cloudera/csd/   && cp FLINK-1.10.2-CDH6.3.3-00
 
 flink-sql-client embedded
 
-![image-20201022180342737](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022180342737.png)
+![image-20201022180342737](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022180342737.png)
 
-![image-20201022180922177](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022180922177.png)
+![image-20201022180922177](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022180922177.png)
 
-![image-20201022181021414](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022181021414.png)
+![image-20201022181021414](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022181021414.png)
 
-![image-20201022181140649](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022181140649.png)
+![image-20201022181140649](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022181140649.png)
 
-![image-20201022181208712](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022181208712.png)
+![image-20201022181208712](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022181208712.png)
 
 在YARN中可查看该SQL执行情况
 
-![image-20201022181258445](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022181258445.png)
+![image-20201022181258445](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022181258445.png)
 
 在Flink HistoryServer中可查看任务执行情况
 
-![image-20201022181350859](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022181350859.png)
+![image-20201022181350859](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022181350859.png)
 
-![image-20201023090851943](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201023090851943.png)
+![image-20201023090851943](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201023090851943.png)
 
 也可执行WordCount测试
 
@@ -589,15 +589,15 @@ flink-sql-client embedded
 flink run -m yarn-cluster /opt/cloudera/parcels/FLINK/lib/flink/examples/batch/WordCount.jar
 ```
 
-![image-20201022182230085](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022182230085.png)
+![image-20201022182230085](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022182230085.png)
 
-![image-20201023090946077](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201023090946077.png)
+![image-20201023090946077](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201023090946077.png)
 
 ## 问题
 
 ### Q1: 权限认证
 
-![image-20201022180048083](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022180048083.png)
+![image-20201022180048083](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022180048083.png)
 
 在shell操作前，使用kinit -k -t /root/flink.keytab flink@xxx.COM
 
@@ -611,25 +611,25 @@ flink run -m yarn-cluster /opt/cloudera/parcels/FLINK/lib/flink/examples/batch/W
 
 Q1:缺少flink-connector-hive_2.11-1.10.2.jar包
 
-![image-20201022185425563](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022185425563.png)
+![image-20201022185425563](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022185425563.png)
 
 将flink-connector-hive_2.11-1.10.2.jar scp到各节点后
 
 Q2：缺少 hive-exec-2.1.1-cdh6.3.3.jar包
 
-![image-20201022185744738](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022185744738.png)
+![image-20201022185744738](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022185744738.png)
 
 将hive-exec-2.1.1-cdh6.3.3.jar  scp到各节点后
 
 Q3:缺少libfb303-0.9.3.jar包
 
-![image-20201022185930504](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022185930504.png)
+![image-20201022185930504](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022185930504.png)
 
 将libfb303-0.9.3.jar scp到各节点后
 
 Q4:缺少flink-shaded-hadoop-2-uber-3.0.0-cdh6.3.3-10.0.jar包
 
-![image-20201022190440588](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022190440588.png)
+![image-20201022190440588](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022190440588.png)
 
 
 
@@ -645,5 +645,5 @@ sql-libs为你自己创建的文件夹，里面存放的就是flink连接kafka�
 
 原因：每次提交Flink程序，Flink都会去加载/opt/cloudera/parcels/FLINK/lib/flink/lib/ 下的包，会照成资源浪费，依赖包过多，可能会有JAR包冲突的问题！
 
-![image-20201022191403740](/Users/guiyifei/Dev/flink-parcel-master/github-img/image-20201022191403740.png)
+![image-20201022191403740](https://github.com/EvenGui/flink-parcel-master/blob/main/github-img/image-20201022191403740.png)
 
