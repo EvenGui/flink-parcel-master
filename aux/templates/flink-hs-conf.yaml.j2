@@ -1,0 +1,51 @@
+{#
+# Licensed to Cloudera, Inc. under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  Cloudera, Inc. licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#}
+{%- for key, value in properties | dictsort() -%}
+{%- if key in (
+  'security.kerberos.login.contexts',
+  'security.kerberos.login.keytab',
+  'security.kerberos.login.use-ticket-cache',
+  'security.kerberos.login.principal') %}
+{%- if globals['kerberos.auth.enabled'] %}
+{{ key }}: {{ value }}
+{%- endif %}
+{%- elif key in ('ssl_enabled') %}
+{%- if properties['ssl_enabled'] %}
+historyserver.web.ssl.enabled: true
+security.ssl.rest.enabled: true
+{%- endif %}
+{%- elif key in ('ssl.server.keystore.location') %}
+{%- if properties['ssl_enabled'] %}
+security.ssl.rest.keystore: {{ value }}
+{%- endif %}
+{%- elif key in ('ssl.server.keystore.password') %}
+{%- if properties['ssl_enabled'] %}
+security.ssl.rest.keystore-password: {{ value }}
+{%- endif %}
+{%- elif key in ('ssl.server.keystore.keypassword') %}
+{%- if properties['ssl_enabled'] %}
+security.ssl.rest.key-password: {{ value }}
+{%- endif %}
+{%- elif key in ('historyserver.archive.fs.dir') %}
+{{ key }}: hdfs://{{ value }}
+{%- else %}
+{{ key }}: {{ value }}
+{%- endif %}
+{%- endfor %}
+
+{{}}

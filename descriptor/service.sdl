@@ -1,0 +1,835 @@
+{
+    "name": "FLINK",
+    "label": "Flink",
+    "description": "Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams.",
+    "version": "%VERSION%",
+    "compatibility": {
+       "cdhVersion": {
+           "min": "%CDH_MIN%",
+           "max": "%CDH_MAX%"
+       }
+    },
+    "runAs": {
+        "user": "flink",
+        "group": "flink",
+        "principal": "flink"
+    },
+    "icon": "images/icon.png",
+    "parcel": {
+        "requiredTags": [
+            "flink",
+            "cdh"
+        ],
+        "optionalTags": [
+            "flink-plugin"
+        ]
+    },
+    "serviceDependencies": [
+        {
+            "name": "HDFS",
+            "required": "true"
+        },
+        {
+            "name": "YARN",
+            "required": "true"
+        },
+        {
+            "name": "ZOOKEEPER",
+            "required": "true"
+        },
+        {
+            "name": "HIVE",
+            "required": "false"
+        }
+    ],
+    "hdfsDirs": [
+        {
+            "name": "CreateJobManagerArchiveDirCommand",
+            "label": "Create JobManager Archive Directory",
+            "description": "Creates the directory in HDFS where application history will be stored.",
+            "directoryDescription": "JobManager Archive Directory (HDFS)",
+            "path": "${jobmanager_archive_fs_dir}",
+            "permissions": "1777"
+        },
+        {
+            "name": "CreateStateCheckpointsDirCommand",
+            "label": "Create State Checkpoint Directory",
+            "description": "Creates directory used for storing the data files and meta data of checkpoints.",
+            "directoryDescription": "State Checkpoint Directory (HDFS)",
+            "path": "${state_checkpoints_dir}",
+            "permissions": "1777"
+        },
+        {
+            "name": "CreateStateSavepointsDirCommand",
+            "label": "Create State Savepoint Directory",
+            "description": "Creates directory used for storing the data files and meta data of savepoints",
+            "directoryDescription": "State Savepoint Directory (HDFS)",
+            "path": "${state_savepoints_dir}",
+            "permissions": "1777"
+        },
+        {
+            "name": "CreateHaDirCommand",
+            "label": "Create HA Directory",
+            "description": "Creates directory used for storing the data files and meta data of HA",
+            "directoryDescription": "HA Directory (HDFS)",
+            "path": "${high_availability_storage_dir}",
+            "permissions": "1777"
+        }
+    ],
+    "serviceInit": {
+        "preStartSteps": [
+            {
+                "commandName": "CreateStateCheckpointsDirCommand"
+            },
+            {
+                "commandName": "CreateStateSavepointsDirCommand"
+            },
+            {
+                "commandName": "CreateJobManagerArchiveDirCommand"
+            },
+            {
+                "commandName": "CreateHaDirCommand"
+            }
+        ]
+    },
+    "kerberos": "${kerberos.auth.enabled}",
+    "parameters": [
+        {
+            "name": "kerberos.auth.enabled",
+            "label": "Enable Kerberos Authentication",
+            "description": "Enables Kerberos authentication for Flink",
+            "type": "boolean",
+            "default": "false",
+            "configurableInWizard": true
+        },
+        {
+            "name": "jobmanager_heap_size",
+            "label": "JobManager Heap Size",
+            "description": "JVM heap size for the JobManager",
+            "configName": "jobmanager.heap.size",
+            "default": "1073741824",
+            "type": "memory",
+            "unit": "bytes",
+            "required": "true"
+        },
+        {
+            "name": "taskmanager_memory_process_size",
+            "label": "TaskManager Process Memory Size",
+            "description": "This includes all the memory that a TaskExecutor consumes, consisting of Total Flink Memory, JVM Metaspace, and JVM Overhead. On containerized setups, this should be set to the container memory. See also 'taskmanager.memory.flink.size' for total Flink memory size configuration.",
+            "configName": "taskmanager.memory.process.size",
+            "default": "2147483648",
+            "type": "memory",
+            "unit": "bytes",
+            "required": "true"
+        },
+        {
+            "name": "taskmanager_managed_memory_fraction",
+            "label": "TaskManager Managed Memory Fraction",
+            "description": "Fraction of Total Flink Memory to be used as Managed Memory, if Managed Memory size is not explicitly specified. Managed memory is used by Flink operators (caching, sorting, hashtables) and state backends (RocksDB).",
+            "configName": "taskmanager.memory.managed.fraction",
+            "default": "0.4",
+            "type": "double",
+            "required": "true"
+        },
+        {
+            "name": "taskmanager_number_of_task_slots",
+            "label": "TaskManager Number of Task Slots",
+            "description": "The number of parallel operator or user function instances that a single TaskManager can run. If this value is larger than 1, a single TaskManager takes multiple instances of a function or operator. That way, the TaskManager can utilize multiple CPU cores, but at the same time, the available memory is divided between the different operator or function instances. This value is typically proportional to the number of physical CPU cores that the TaskManager's machine has (e.g., equal to the number of cores, or half the number of cores).",
+            "configName": "taskmanager.numberOfTaskSlots",
+            "default": "1",
+            "type": "long",
+            "required": "true"
+        },
+        {
+            "name": "parallelism_default",
+            "label": "Default Parallelism",
+            "description": "Default parallelism for jobs",
+            "configName": "parallelism.default",
+            "default": "1",
+            "type": "long",
+            "required": "true"
+        },
+        {
+            "name": "yarn_maximum_failed_containers",
+            "label": "Maximum Failed Containers for YARN",
+            "description": "Maximum number of containers the system is going to reallocate in case of a failure.",
+            "configName": "yarn.maximum-failed-containers",
+            "default": "100",
+            "type": "long",
+            "required": "false"
+        },
+        {
+            "name": "yarn_application_attempts",
+            "label": "Maximum ApplicationMaster Attempts for YARN",
+            "description": "Number of ApplicationMaster restarts. Note that that the entire Flink cluster will restart and the YARN Client will loose the connection. Also, the JobManager address will change and you’ll need to set the JM host:port manually. It is recommended to leave this option at 1.",
+            "configName": "yarn.application-attempts",
+            "default": "5",
+            "type": "long",
+            "required": "false"
+        },
+        {
+            "name": "yarn_container_start_command_template",
+            "label": "Yarn Container Command template",
+            "description": "Specifies the command template for yarn container starts. Should only be overriden by expert users.",
+            "configName": "yarn.container-start-command-template",
+            "default": "%java% %jvmmem% %jvmopts% -DyarnContainerId=$CONTAINER_ID %logging% %class% %args% %redirects%",
+            "type": "string",
+            "required": "false"
+        },
+        {
+            "name": "yarn_tags",
+            "label": "YARN Tags",
+            "description": "A comma-separated list of tags to apply to the Flink YARN application.",
+            "configName": "yarn.tags",
+            "default": "flink",
+            "type": "string",
+            "required": "false"
+        },
+        {
+            "name": "state_backend",
+            "label": "State Backend",
+            "description": "The state backend to be used to store and checkpoint state.",
+            "configName": "state.backend",
+            "default": "FILESYSTEM",
+            "type": "string_enum",
+            "validValues": [
+                "FILESYSTEM",
+                "ROCKSDB"
+            ],
+            "required": "false"
+        },
+        {
+            "name": "state_checkpoints_dir",
+            "label": "State Checkpoints Directory (HDFS)",
+            "description": "The default directory used for storing the data files and meta data of checkpoints in a Flink supported filesystem. After changing this location please execute the `Create State Checkpoint Directory` action of the Flink service.",
+            "configName": "state.checkpoints.dir",
+            "default": "/user/flink/checkpoints",
+            "type": "path",
+            "pathType": "serviceSpecific",
+            "required": "false",
+            "translateToBaseHdfs": "true"
+        },
+        {
+            "name": "state_savepoints_dir",
+            "label": "State Savepoints Directory (HDFS)",
+            "description": "The default directory used for storing the data files and meta data of checkpoints in a Flink supported filesystem. After changing this location please execute the `Create State Savepoint Directory` action of the Flink service.",
+            "configName": "state.savepoints.dir",
+            "default": "/user/flink/savepoints",
+            "type": "path",
+            "pathType": "serviceSpecific",
+            "required": "false",
+            "translateToBaseHdfs": "true"
+        },
+        {
+            "name": "state_backend_incremental",
+            "label": "Incremental Checkpoints",
+            "description": "Option whether the state backend should create incremental checkpoints, if possible. For an incremental checkpoint, only a diff from the previous checkpoint is stored, rather than the complete checkpoint state. Some state backends may not support incremental checkpoints and ignore this option.",
+            "configName": "state.backend.incremental",
+            "default": "true",
+            "type": "boolean",
+            "required": "true"
+        },
+        {
+            "name": "state_backend_local_recovery",
+            "label": "Local State Recovery",
+            "description": "This option configures local recovery for this state backend. By default, local recovery is deactivated. Local recovery currently only covers keyed state backends. Currently, MemoryStateBackend does not support local recovery and ignore this option.",
+            "configName": "state.backend.local-recovery",
+            "default": "true",
+            "type": "boolean",
+            "required": "true"
+        },
+        {
+            "name": "state_backend_rocksdb_memory_managed",
+            "label": "RocksDB Memory Management",
+            "description": "If set, the RocksDB state backend will automatically configure itself to use the managed memory budget of the task slot, and divide the memory over write buffers, indexes, block caches, etc. That way, the three major uses of memory of RocksDB will be capped.",
+            "configName": "state.backend.rocksdb.memory.managed",
+            "default": "true",
+            "type": "boolean",
+            "required": "true"
+        },
+        {
+            "name": "state_backend_rocksdb_memory_high_prio_ratio",
+            "label": "RocksDB High-Prio Memory Fraction",
+            "description": "The fraction of cache memory that is reserved for high-priority data like index, filter, and compression dictionary blocks. This option only has an effect when 'state.backend.rocksdb.memory.managed' or 'state.backend.rocksdb.memory.fixed-per-slot' are configured.",
+            "configName": "state.backend.rocksdb.memory.high-prio-pool-ratio",
+            "default": "0.1",
+            "type": "double",
+            "required": "true"
+        },
+        {
+            "name": "state_backend_rocksdb_memory_write_buffer_ratio",
+            "label": "RocksDB Write Buffer Memory Fraction",
+            "description": "The maximum amount of memory that write buffers may take, as a fraction of the total shared memory. This option only has an effect when 'state.backend.rocksdb.memory.managed' or 'state.backend.rocksdb.memory.fixed-per-slot' are configured.",
+            "configName": "state.backend.rocksdb.memory.write-buffer-ratio",
+            "default": "0.5",
+            "type": "double",
+            "required": "true"
+        },
+        {
+            "name": "state_backend_rocksdb_timer_service_factory",
+            "label": "RocksDB StateBackend Timer Service Factory",
+            "description": "This determines the factory for timer service state implementation. Options are either HEAP (heap-based, default) or ROCKSDB for an implementation based on RocksDB.",
+            "configName": "state.backend.rocksdb.timer-service.factory",
+            "default": "ROCKSDB",
+            "type": "string_enum",
+            "validValues": [
+                "HEAP",
+                "ROCKSDB"
+            ],
+            "required": "false"
+        },
+        {
+            "name": "state_checkpoints_num_retained",
+            "label": "Number of Checkpoints to Retain",
+            "description": "The maximum number of completed checkpoints to retain.",
+            "configName": "state.checkpoints.num-retained",
+            "default": "3",
+            "type": "long",
+            "required": "false"
+        },
+        {
+            "name": "jobmanager_archive_fs_dir",
+            "label": "JobManager Archive Directory (HDFS)",
+            "description": "Directory to upload completed jobs to. (Add this directory to the list of monitored directories of the HistoryServer as well.) After changing this location please execute the `Create JobManager Archive Directory` action of the Flink service.",
+            "configName": "jobmanager.archive.fs.dir",
+            "default": "/user/flink/applicationHistory",
+            "type": "path",
+            "pathType": "serviceSpecific",
+            "required": "true",
+            "translateToBaseHdfs": "true"
+        },
+        {
+            "name": "security_kerberos_login_contexts",
+            "label": "Kerberos Login Contexts",
+            "description": "A comma-separated list of login contexts to provide the Kerberos credentials to (for example, `Client,KafkaClient` to use the credentials for ZooKeeper authentication and for Kafka authentication)",
+            "configName": "security.kerberos.login.contexts",
+            "default": [
+                "Client",
+                "KafkaClient"
+            ],
+            "type": "string_array",
+            "separator": ",",
+            "required": "false"
+        },
+        {
+            "name": "security_kerberos_login_keytab",
+            "label": "Kerberos Login Keytab",
+            "description": "Absolute path to a Kerberos keytab file that contains the user credentials.",
+            "configName": "security.kerberos.login.keytab",
+            "type": "string",
+            "default": "flink.keytab",
+            "required": "false"
+        },
+        {
+            "name": "security_kerberos_login_use_ticket_cache",
+            "label": "Kerberos Use Ticket Cache",
+            "description": "Indicates whether to read from your Kerberos ticket cache.",
+            "configName": "security.kerberos.login.use-ticket-cache",
+            "type": "boolean",
+            "default": "false",
+            "required": "false"
+        },
+        {
+            "name": "execution.target",
+            "label": "Executor",
+            "description": "The name of the executor to be used for executing the given job.",
+            "configName": "execution.target",
+            "default": "yarn-per-job",
+            "type": "string_enum",
+            "validValues": [
+                "yarn-per-job",
+                "yarn-session"
+            ],
+            "required": "true"
+        },
+        {
+            "name": "high_availability",
+            "label": "High Availability Service",
+            "description": "Defines high-availability mode used for the cluster execution. To enable high-availability, set this mode to 'ZOOKEEPER' or specify FQN of factory class.",
+            "configName": "high-availability",
+            "default": "ZOOKEEPER",
+            "type": "string_enum",
+            "validValues": [
+                "NONE",
+                "ZOOKEEPER"
+            ],
+            "required": "false"
+        },
+        {
+            "name": "high_availability_storage_dir",
+            "label": "High Availability Storage Directory",
+            "description": "File system path (URI) where Flink persists metadata in high-availability setups. After changing this location please execute the `Create HA Directory` action of the Flink service.",
+            "configName": "high-availability.storageDir",
+            "default": "/user/flink/ha",
+            "type": "path",
+            "pathType": "serviceSpecific",
+            "required": "false",
+            "translateToBaseHdfs": "true"
+        },
+        {
+            "name": "high_availability_zookeeper_client_acl",
+            "label": "High Availability Zookeeper client ACL",
+            "description": "Defines the ACL (open|creator) to be configured on ZK node. The configuration value can be set to 'creator' if the ZooKeeper server configuration has the 'authProvider' property mapped to use SASLAuthenticationProvider and the cluster is configured to run in secure mode (Kerberos).",
+            "configName": "high-availability.zookeeper.client.acl",
+            "default": "open",
+            "type": "string",
+            "required": "false"
+        },
+        {
+            "name": "taskmanager_network_memory_fraction",
+            "label": "Network Buffer JVM Memory Fraction",
+            "description": "Fraction of JVM memory to use for network buffers. This determines how many streaming data exchange channels a TaskManager can have at the same time and how well buffered the channels are. If a job is rejected or you get a warning that the system has not enough buffers available, increase this value or the min/max values below. Also note, that 'taskmanager.memory.network.min' and 'taskmanager.memory.network.max' may override this fraction.",
+            "configName": "taskmanager.memory.network.fraction",
+            "default": "0.1",
+            "type": "double",
+            "required": "true"
+        },
+        {
+            "name": "taskmanager_network_memory_max",
+            "label": "Network Buffer Memory Max",
+            "description": "Max Network Memory size for TaskExecutors. Network Memory is off-heap memory reserved for ShuffleEnvironment (e.g., network buffers). Network Memory size is derived to make up the configured fraction of the Total Flink Memory. If the derived size is less/greater than the configured min/max size, the min/max size will be used. The exact size of Network Memory can be explicitly specified by setting the min/max to the same value.",
+            "configName": "taskmanager.memory.network.max",
+            "default": "2147483648",
+            "type": "memory",
+            "unit": "bytes",
+            "required": "true"
+        },
+        {
+            "name": "env_java_opts_jobmanager",
+            "label": "JobManager JVM Options",
+            "description": "Java options to start the JVM of the JobManager with.",
+            "configName": "env.java.opts.jobmanager",
+            "default": "",
+            "type": "string",
+            "required": "false"
+        },
+        {
+            "name": "env_java_opts_taskmanager",
+            "label": "TaskManager JVM Options",
+            "description": "Java options to start the JVM of the TaskManager with.",
+            "configName": "env.java.opts.taskmanager",
+            "default": "",
+            "type": "string",
+            "required": "false"
+        },
+        {
+            "name": "historyserver_cli_fallback",
+            "label": "CLI global dashboard fallback",
+            "description": "Allow the CLI to fall back to the global dashboard endpoint to access Flink jobs when the jobmanager address or yarn appId are not defined.",
+            "configName": "historyserver.cli.fallback",
+            "default": "true",
+            "type": "boolean",
+            "required": "false"
+        },
+        {
+            "name": "enable_hive_catalog",
+            "label": "Enable Hive Catalog for SQL Client",
+            "description": "Enables Hive Catalog for SQL Client",
+            "default": "false",
+            "type": "boolean",
+            "required": "false"
+        },
+        {
+            "name": "sql_current_catalog",
+            "label": "Catalog for SQL Client",
+            "description": "Catalog for SQL Client",
+            "default": "MEMORY",
+            "type": "string_enum",
+            "validValues": [
+                "MEMORY",
+                "HIVE"
+            ],
+            "required": "true"
+        },
+        {
+            "name": "sql_current_db",
+            "label": "SQL Client Current Database",
+            "description": "SQL Client Current Database",
+            "default": "",
+            "type": "string",
+            "required": "false"
+        },
+        {
+            "name": "execution_buffer_timeout",
+            "label": "Network Buffer Timeout (milliseconds)",
+            "description": "The maximum time frequency (ms) for the flushing of the output buffers. By default the output buffers flush frequently to provide low latency and to aid smooth developer experience.",
+            "configName": "execution.buffer-timeout",
+            "default": "100",
+            "type": "long",
+            "required": "true"
+        },
+        {
+            "name": "execution_snapshot_compression",
+            "label": "Enable Checkpoint Compression",
+            "description": "Tells if we should use compression for the state snapshot data or not.",
+            "configName": "execution.checkpointing.snapshot-compression",
+            "default": "false",
+            "type": "boolean",
+            "required": "true"
+        },
+        {
+            "name": "pipeline_auto_watermark_interval",
+            "label": "Automatic Watermark Interval (milliseconds)",
+            "description": "The interval of the automatic watermark emission. Watermarks are used throughout the streaming system to keep track of the progress of time. They are used, for example, for time based windowing.",
+            "configName": "pipeline.auto-watermark-interval",
+            "default": "200",
+            "type": "long",
+            "required": "true"
+        },
+        {
+            "name": "pipeline_generic_types",
+            "label": "Allow Generic Types",
+            "description": "If the use of generic types is disabled, Flink will throw an UnsupportedOperationException whenever it encounters a data type that would go through Kryo for serialization.",
+            "configName": "pipeline.generic-types",
+            "default": "true",
+            "type": "boolean",
+            "required": "true"
+        },
+        {
+            "name": "pipeline_max_parallelism",
+            "label": "Max Parallelism",
+            "description": "The program-wide maximum parallelism used for operators which haven't specified a maximum parallelism. The maximum parallelism specifies the upper limit for dynamic scaling and the number of key groups used for partitioned state.",
+            "configName": "pipeline.max-parallelism",
+            "type": "long",
+            "required": "false"
+        },
+        {
+            "name": "pipeline_object_reuse",
+            "label": "Enable Object Reuse",
+            "description": "When enabled objects that Flink internally uses for deserialization and passing data to user-code functions will be reused. Keep in mind that this can lead to bugs when the user-code function of an operation is not aware of this behaviour.",
+            "configName": "pipeline.object-reuse",
+            "default": "false",
+            "type": "boolean",
+            "required": "true"
+        },
+        {
+            "name": "externalized_checkpoint_retention",
+            "label": "Externalized Checkpoint Retention",
+            "description": "The mode defines how an externalized checkpoint should be cleaned up on job cancellation. If you choose to retain externalized checkpoints on cancellation you have to handle checkpoint clean up manually when you cancel the job as well",
+            "configName": "execution.checkpointing.externalized-checkpoint-retention",
+            "default": "RETAIN_ON_CANCELLATION",
+            "type": "string_enum",
+            "validValues": [
+                "RETAIN_ON_CANCELLATION",
+                "DELETE_ON_CANCELLATION"
+            ],
+            "required": "true"
+        },
+        {
+            "name": "checkpointing_interval",
+            "label": "Checkpointing Interval (milliseconds)",
+            "description": "Gets the interval in which checkpoints are periodically scheduled. This setting defines the base interval. Checkpoint triggering may be delayed by the settings execution.checkpointing.max-concurrent-checkpoints and execution.checkpointing.min-pause",
+            "configName": "execution.checkpointing.interval",
+            "type": "long",
+            "required": "false"
+        },
+        {
+            "name": "max_concurrent_checkpoints",
+            "label": "Max Concurrent Checkpoints",
+            "description": "The maximum number of checkpoint attempts that may be in progress at the same time. If this value is n, then no checkpoints will be triggered while n checkpoint attempts are currently in flight. For the next checkpoint to be triggered, one checkpoint attempt would need to finish or expire.",
+            "configName": "execution.checkpointing.max-concurrent-checkpoints",
+            "default": "1",
+            "type": "long",
+            "required": "true"
+        },
+        {
+            "name": "checkpointing_min_pause",
+            "label": "Min Pause Between Checkpoints (milliseconds)",
+            "description": "The minimal pause between checkpointing attempts. This setting defines how soon thecheckpoint coordinator may trigger another checkpoint after it becomes possible to triggeranother checkpoint with respect to the maximum number of concurrent checkpoints(see execution.checkpointing.max-concurrent-checkpoints).",
+            "configName": "execution.checkpointing.min-pause",
+            "default": "0",
+            "type": "long",
+            "required": "true"
+        },
+        {
+            "name": "checkpointing_mode",
+            "label": "Checkpointing Mode",
+            "description": "The checkpointing mode (exactly-once vs. at-least-once).",
+            "configName": "execution.checkpointing.mode",
+            "default": "EXACTLY_ONCE",
+            "type": "string_enum",
+            "validValues": [
+                "EXACTLY_ONCE",
+                "AT_LEAST_ONCE"
+            ],
+            "required": "true"
+        },
+        {
+            "name": "checkpointing_timeout",
+            "label": "Checkpointing Timeout (milliseconds)",
+            "description": "The maximum time that a checkpoint may take before being discarded.",
+            "configName": "execution.checkpointing.timeout",
+            "default": "60000",
+            "type": "long",
+            "required": "true"
+        },
+        {
+          "name": "infer_source_parallelism",
+          "label": "Infer Source Parallelism",
+          "description": "If is true, source parallelism is inferred according to splits number. If is false, parallelism of source are set by config.",
+          "configName": "table.exec.hive.infer-source-parallelism",
+          "default": "true",
+          "type": "boolean",
+          "required": "true"
+        },
+        {
+          "name": "infer_source_parallelism_max",
+          "label": "Infer Source Parallelism Max",
+          "description": "Sets max infer parallelism for source operator.",
+          "configName": "table.exec.hive.infer-source-parallelism.max",
+          "default": "1000",
+          "type": "long",
+          "required": "true"
+        }
+    ],
+    "rolesWithExternalLinks": [
+        "FLINK_HISTORY_SERVER"
+    ],
+    "roles": [
+        {
+            "name": "FLINK_HISTORY_SERVER",
+            "label": "Flink Dashboard",
+            "pluralLabel": "Flink Dashboards",
+            "jvmBased": true,
+            "startRunner": {
+                "program": "scripts/control.sh",
+                "args": [
+                    "start_history_server"
+                ]
+            },
+            "externalLink": {
+                "name": "historyserver_web_ui",
+                "label": "Flink Dashboard",
+                "url": "http://${host}:${historyserver_web_port}",
+                "secureUrl": "https://${host}:${historyserver_web_port}"
+            },
+            "topology": {
+                "minInstances": 1,
+                "maxInstances": 1
+            },
+            "logging": {
+                "configFilename": "flink-conf/log4j-console.properties",
+                "loggingType": "log4j",
+                "filename": "history-server.log",
+                "dir": "/var/log/flink",
+                "configName": "log.dir",
+                "modifiable": true
+            },
+            "parameters": [
+                {
+                    "name": "historyserver_archive_fs_dir",
+                    "label": "History Server Archive Directory (HDFS)",
+                    "description": "Comma separated list of directories to monitor for completed jobs.",
+                    "configName": "historyserver.archive.fs.dir",
+                    "default": "/user/flink/applicationHistory",
+                    "type": "path",
+                    "pathType": "serviceSpecific",
+                    "required": "true",
+                    "translateToBaseHdfs": "true"
+                },
+                {
+                    "name": "historyserver_archive_fs_refresh_interval",
+                    "label": "History Server Archive Directory Refresh Interval",
+                    "description": "Interval in milliseconds for refreshing the archived job directories.",
+                    "configName": "historyserver.archive.fs.refresh-interval",
+                    "default": "10000",
+                    "type": "long",
+                    "required": "true"
+                },
+                {
+                    "name": "historyserver_cluster_fetcher",
+                    "label": "Flink Dashboard Cluster Fetcher",
+                    "description": "Flink Dashboard Cluster Fetcher",
+                    "configName": "historyserver.cluster.fetcher",
+                    "default": "YARN",
+                    "type": "string_enum",
+                    "validValues": [
+                        "YARN",
+                        "NONE"
+                    ],
+                    "required": "true"
+                },
+                {
+                    "name": "historyserver_web_port",
+                    "label": "Flink Dashboard Port",
+                    "description": "Port of the Flink Dashboard's web interface.",
+                    "configName": "historyserver.web.port",
+                    "default": "8082",
+                    "type": "port",
+                    "required": "true"
+                },
+                {
+                    "name": "historyserver_max_history_size",
+                    "label": "Flink Dashboard Max History Size",
+                    "description": "Max number of completed jobs that will be shown on the Flink Dashboard.",
+                    "configName": "historyserver.max.history.size",
+                    "default": "50",
+                    "type": "long",
+                    "required": "true"
+                }
+            ],
+            "kerberosPrincipals": [
+                {
+                    "name": "flink_service_principal",
+                    "primary": "${principal}",
+                    "instance": "${host}"
+                }
+            ],
+            "sslServer": {
+                "keyIdentifier": "flink_historyserver",
+                "enabledConfigName": "ssl_enabled",
+                "keystoreLocationConfigName": "security.ssl.rest.keystore",
+                "keystorePasswordConfigName": "security.ssl.rest.keystore-password",
+                "keyPasswordOptionality": "required",
+                "keystoreKeyPasswordConfigName": "security.ssl.rest.key-password",
+                "autoTlsMode": "auto"
+            },
+            "sslClient": {
+                "truststoreLocationConfigName": "security.ssl.rest.truststore",
+                "truststorePasswordConfigName": "security.ssl.rest.truststore-password"
+            },
+            "configWriter": {
+                "generators": [
+                    {
+                        "filename": "flink-conf/flink-conf.xml",
+                        "configFormat": "hadoop_xml",
+                        "kerberosPrincipals": [
+                            {
+                                "principalName": "flink_service_principal",
+                                "propertyName": "security.kerberos.login.principal"
+                            }
+                        ],
+                        "includedParams": [
+                            "historyserver_archive_fs_dir",
+                            "historyserver_archive_fs_refresh_interval",
+                            "historyserver_web_port",
+                            "historyserver_cluster_fetcher",
+                            "historyserver_max_history_size",
+                            "security_kerberos_login_contexts",
+                            "security_kerberos_login_keytab",
+                            "security_kerberos_login_use_ticket_cache",
+                            "ssl_enabled",
+                            "ssl_server_keystore_location",
+                            "ssl_server_keystore_password",
+                            "ssl_server_keystore_keypassword",
+                            "ssl_client_truststore_location",
+                            "ssl_client_truststore_password"
+                        ]
+                    },
+                    {
+                        "filename": "flink-conf/_internal.xml",
+                        "configFormat": "hadoop_xml"
+                    }
+                ]
+            }
+        }
+    ],
+    "gateway": {
+        "alternatives": {
+            "name": "flink-conf",
+            "linkRoot": "/etc/flink",
+            "priority": 50
+        },
+        "scriptRunner": {
+            "program": "scripts/control.sh",
+            "environmentVariables": {
+                "SQL_CATALOG": "${sql_current_catalog}",
+                "SQL_DEFAULT_DB": "${sql_current_db}",
+                "ENABLE_HIVE_CATALOG": "${enable_hive_catalog}"
+            },
+            "args": [
+                "client"
+            ]
+        },
+        "sslClient": {
+            "truststoreLocationConfigName": "security.ssl.rest.truststore",
+            "truststorePasswordConfigName": "security.ssl.rest.truststore-password"
+        },
+        "configWriter": {
+            "generators": [
+                {
+                    "filename": "flink-conf-xml/flink-conf.xml",
+                    "configFormat": "hadoop_xml",
+                    "includedParams": [
+                        "execution.target",
+                        "parallelism_default",
+                        "jobmanager_heap_size",
+                        "taskmanager_memory_process_size",
+                        "taskmanager_managed_memory_fraction",
+                        "taskmanager_network_memory_fraction",
+                        "taskmanager_network_memory_max",
+                        "taskmanager_number_of_task_slots",
+                        "env_java_opts_taskmanager",
+                        "env_java_opts_jobmanager",
+                        "yarn_maximum_failed_containers",
+                        "yarn_application_attempts",
+                        "yarn_tags",
+                        "yarn_container_start_command_template",
+                        "checkpointing_interval",
+                        "checkpointing_mode",
+                        "externalized_checkpoint_retention",
+                        "checkpointing_timeout",
+                        "max_concurrent_checkpoints",
+                        "checkpointing_min_pause",
+                        "execution_snapshot_compression",
+                        "state_backend",
+                        "state_checkpoints_dir",
+                        "state_savepoints_dir",
+                        "state_backend_incremental",
+                        "state_backend_local_recovery",
+                        "state_checkpoints_num_retained",
+                        "state_backend_rocksdb_memory_managed",
+                        "state_backend_rocksdb_memory_high_prio_ratio",
+                        "state_backend_rocksdb_memory_write_buffer_ratio",
+                        "state_backend_rocksdb_timer_service_factory",
+                        "jobmanager_archive_fs_dir",
+                        "historyserver_cli_fallback",
+                        "security_kerberos_login_contexts",
+                        "security_kerberos_login_use_ticket_cache",
+                        "high_availability",
+                        "high_availability_storage_dir",
+                        "high_availability_zookeeper_client_acl",
+                        "execution_buffer_timeout",
+                        "pipeline_auto_watermark_interval",
+                        "pipeline_generic_types",
+                        "pipeline_object_reuse",
+                        "infer_source_parallelism",
+                        "infer_source_parallelism_max"
+                    ],
+                    "additionalConfigs": [
+                        {
+                            "key": "#high-availability.zookeeper.quorum",
+                            "value": "{{QUORUM}}"
+                        }
+                    ]
+                },
+                {
+                    "filename": "flink-conf-xml/_internal.xml",
+                    "configFormat": "hadoop_xml"
+                }
+            ],
+            "auxConfigGenerators": [
+                {
+                    "filename": "flink-conf/sql-client-defaults.yaml",
+                    "sourceFilename": "aux/defaults/sql-client-defaults.yaml"
+                },
+                {
+                    "filename": "flink-conf/log4j.properties",
+                    "sourceFilename": "aux/defaults/log4j.properties"
+                },
+                {
+                    "filename": "flink-conf/log4j-session.properties",
+                    "sourceFilename": "aux/defaults/log4j-session.properties"
+                },
+                {
+                    "filename": "flink-conf/log4j-yarn-session.properties",
+                    "sourceFilename": "aux/defaults/log4j-yarn-session.properties"
+                }
+            ]
+        },
+        "logging": {
+            "configFilename": "flink-conf/log4j-cli.properties",
+            "loggingType": "log4j"
+        }
+    }
+}

@@ -1,0 +1,38 @@
+{
+  "flink": {
+    "destination": "/usr/bin/flink",
+    "source": "bin/flink",
+    "priority": 10,
+    "isDirectory": false
+  },
+  "flink-historyserver": {
+    "destination": "/usr/bin/flink-historyserver",
+    "source": "bin/flink-historyserver",
+    "priority": 10,
+    "isDirectory": false
+  },
+  "flink-pyflink-shell": {
+    "destination": "/usr/bin/flink-pyflink-shell",
+    "source": "bin/flink-pyflink-shell",
+    "priority": 10,
+    "isDirectory": false
+  },
+  "flink-sql-client": {
+    "destination": "/usr/bin/flink-sql-client",
+    "source": "bin/flink-sql-client",
+    "priority": 10,
+    "isDirectory": false
+  },
+  "flink-start-scala-shell": {
+    "destination": "/usr/bin/flink-start-scala-shell",
+    "source": "bin/flink-start-scala-shell",
+    "priority": 10,
+    "isDirectory": false
+  },
+  "flink-yarn-session": {
+    "destination": "/usr/bin/flink-yarn-session",
+    "source": "bin/flink-yarn-session",
+    "priority": 10,
+    "isDirectory": false
+  }
+}

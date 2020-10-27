@@ -1,0 +1,4 @@
+Disclaimer: this is an early access beta version of Cloudera Streaming Analytics Powered by Apache Flink.
+Cloudera does not offer support for this version.
+
+The goal of this beta release is to enable application development with CSA as early as possible.

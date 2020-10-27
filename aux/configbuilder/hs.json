@@ -1,0 +1,18 @@
+{
+  "globals": "${CONF_DIR}/flink-conf/_internal.xml",
+  "jobs": [
+    {
+      "id": "flink-conf.yaml",
+      "transformers": [
+        {
+          "class": "com.cloudera.cfg.transformer.RawPropertyTransformer",
+          "userProperties": "${CONF_DIR}/flink-conf/flink-conf.xml"
+        }
+      ],
+      "render": {
+        "template": "${CONF_DIR}/aux/templates/flink-hs-conf.yaml.j2",
+        "output": "${CONF_DIR}/flink-conf/flink-conf.yaml"
+      }
+    }
+  ]
+}

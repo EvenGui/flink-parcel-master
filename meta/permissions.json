@@ -1,0 +1,82 @@
+{
+  "bin/flink": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "bin/flink-historyserver": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "bin/flink-pyflink-shell": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "bin/flink-sql-client": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "bin/flink-start-scala-shell": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "bin/flink-yarn-session": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "bin/flink-exec-env.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/flink": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/historyserver.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/flink-daemon.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/flink-console.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/pyflink-shell.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/sql-client.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/start-scala-shell.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "lib/flink/bin/yarn-session.sh": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  },
+  "etc/flink/conf.dist": {
+    "user":  "flink",
+    "group": "flink",
+    "permissions": "0755"
+  }
+}
