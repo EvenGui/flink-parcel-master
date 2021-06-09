@@ -31,34 +31,24 @@
 # Define tables here such as sources, sinks, views, or temporal tables.
 
 tables: [] # empty list
-#  - name: Messages
-#    type: source-table
-#    update-mode: append
-#    connector:
-#      property-version: 1
-#      type: kafka
-#      version: universal
-#      topic: sql.messages.json   # kafka topic name
-#      startup-mode: earliest-offset
-#      properties:
-#        - key: bootstrap.servers
-#          value: <your_host>:9092
-#        - key: group.id
-#          value: testGroup
-#
-#    format:
-#      property-version: 1
-#      type: json
-#      schema: "ROW(id LONG, msg STRING)"     # Schema of the json formatted records in the kafka topic
-#
-#    schema:    # Schema of the table, the attributes here are a superset of the format's schema.
-#      - name: id
-#        type: LONG
-#      - name: msg
-#        type: STRING
-#      - name: procTime
-#        type: TIMESTAMP
-#        proctime: true
+# A typical table source definition looks like:
+# - name: ...
+#   type: source-table
+#   connector: ...
+#   format: ...
+#   schema: ...
+
+# A typical view definition looks like:
+# - name: ...
+#   type: view
+#   query: "SELECT ..."
+
+# A typical temporal table definition looks like:
+# - name: ...
+#   type: temporal-table
+#   history-table: ...
+#   time-attribute: ...
+#   primary-key: ...
 
 
 #==============================================================================
@@ -68,6 +58,12 @@ tables: [] # empty list
 # Define scalar, aggregate, or table functions here.
 
 functions: [] # empty list
+# A typical function definition looks like:
+# - name: ...
+#   from: class
+#   class: ...
+#   constructor: ...
+
 
 #==============================================================================
 # Catalogs
@@ -76,6 +72,21 @@ functions: [] # empty list
 # Define catalogs here.
 
 catalogs: [] # empty list
+# A typical catalog definition looks like:
+#  - name: myhive
+#    type: hive
+#    hive-conf-dir: /opt/hive_conf/
+#    default-database: ...
+
+#==============================================================================
+# Modules
+#==============================================================================
+
+# Define modules here.
+
+#modules: # note the following modules will be of the order they are specified
+#  - name: core
+#    type: core
 
 #==============================================================================
 # Execution properties
@@ -85,7 +96,7 @@ catalogs: [] # empty list
 
 execution:
   # select the implementation responsible for planning table programs
-  # possible values are 'old' (used by default) or 'blink'
+  # possible values are 'blink' (used by default) or 'old'
   planner: blink
   # 'batch' or 'streaming' execution
   type: streaming
@@ -93,12 +104,12 @@ execution:
   time-characteristic: event-time
   # interval in ms for emitting periodic watermarks
   periodic-watermarks-interval: 200
-  # 'changelog' or 'table' presentation of results
+  # 'changelog', 'table' or 'tableau' presentation of results
   result-mode: table
   # maximum number of maintained rows in 'table' presentation of results
   max-table-result-rows: 1000000
   # parallelism of the program
-  parallelism: 1
+  # parallelism: 1
   # maximum parallelism
   max-parallelism: 128
   # minimum idle state retention in ms
@@ -110,10 +121,25 @@ execution:
   # current database of the current catalog (default database of the catalog by default)
   current-database: default_database
   # controls how table programs are restarted in case of a failures
-  restart-strategy:
+  # restart-strategy:
     # strategy type
     # possible values are "fixed-delay", "failure-rate", "none", or "fallback" (default)
-    type: fallback
+    # type: fallback
+
+#==============================================================================
+# Configuration options
+#==============================================================================
+
+# Configuration options for adjusting and tuning table programs.
+
+# A full list of options and their default values can be found
+# on the dedicated "Configuration" web page.
+
+# A configuration can look like:
+# configuration:
+#   table.exec.spill-compression.enabled: true
+#   table.exec.spill-compression.block-size: 128kb
+#   table.optimizer.join-reorder-enabled: true
 
 #==============================================================================
 # Deployment properties
