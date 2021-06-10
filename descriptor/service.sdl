@@ -422,34 +422,6 @@
             "required": "false"
         },
         {
-            "name": "enable_hive_catalog",
-            "label": "Enable Hive Catalog for SQL Client",
-            "description": "Enables Hive Catalog for SQL Client",
-            "default": "false",
-            "type": "boolean",
-            "required": "false"
-        },
-        {
-            "name": "sql_current_catalog",
-            "label": "Catalog for SQL Client",
-            "description": "Catalog for SQL Client",
-            "default": "MEMORY",
-            "type": "string_enum",
-            "validValues": [
-                "MEMORY",
-                "HIVE"
-            ],
-            "required": "true"
-        },
-        {
-            "name": "sql_current_db",
-            "label": "SQL Client Current Database",
-            "description": "SQL Client Current Database",
-            "default": "",
-            "type": "string",
-            "required": "false"
-        },
-        {
             "name": "execution_buffer_timeout",
             "label": "Network Buffer Timeout (milliseconds)",
             "description": "The maximum time frequency (ms) for the flushing of the output buffers. By default the output buffers flush frequently to provide low latency and to aid smooth developer experience.",
@@ -588,8 +560,8 @@
     "roles": [
         {
             "name": "FLINK_HISTORY_SERVER",
-            "label": "Flink Dashboard",
-            "pluralLabel": "Flink Dashboards",
+            "label": "History Server",
+            "pluralLabel": "History Servers",
             "jvmBased": true,
             "startRunner": {
                 "program": "scripts/control.sh",
@@ -599,7 +571,7 @@
             },
             "externalLink": {
                 "name": "historyserver_web_ui",
-                "label": "Flink Dashboard",
+                "label": "History Server",
                 "url": "http://${host}:${historyserver_web_port}",
                 "secureUrl": "https://${host}:${historyserver_web_port}"
             },
@@ -638,8 +610,8 @@
                 },
                 {
                     "name": "historyserver_cluster_fetcher",
-                    "label": "Flink Dashboard Cluster Fetcher",
-                    "description": "Flink Dashboard Cluster Fetcher",
+                    "label": "History Server Cluster Fetcher",
+                    "description": "History Server Cluster Fetcher",
                     "configName": "historyserver.cluster.fetcher",
                     "default": "YARN",
                     "type": "string_enum",
@@ -651,8 +623,8 @@
                 },
                 {
                     "name": "historyserver_web_port",
-                    "label": "Flink Dashboard Port",
-                    "description": "Port of the Flink Dashboard's web interface.",
+                    "label": "History Server Port",
+                    "description": "Port of the History Server's web interface.",
                     "configName": "historyserver.web.port",
                     "default": "8082",
                     "type": "port",
@@ -660,8 +632,8 @@
                 },
                 {
                     "name": "historyserver_max_history_size",
-                    "label": "Flink Dashboard Max History Size",
-                    "description": "Max number of completed jobs that will be shown on the Flink Dashboard.",
+                    "label": "History Server Max History Size",
+                    "description": "Max number of completed jobs that will be shown on the History Server.",
                     "configName": "historyserver.max.history.size",
                     "default": "50",
                     "type": "long",
@@ -732,11 +704,6 @@
         },
         "scriptRunner": {
             "program": "scripts/control.sh",
-            "environmentVariables": {
-                "SQL_CATALOG": "${sql_current_catalog}",
-                "SQL_DEFAULT_DB": "${sql_current_db}",
-                "ENABLE_HIVE_CATALOG": "${enable_hive_catalog}"
-            },
             "args": [
                 "client"
             ]
@@ -810,8 +777,8 @@
             ],
             "auxConfigGenerators": [
                 {
-                    "filename": "flink-conf/sql-client-defaults.yaml",
-                    "sourceFilename": "aux/defaults/sql-client-defaults.yaml"
+                    "filename": "flink-conf/log4j-console.properties",
+                    "sourceFilename": "aux/defaults/log4j-console.properties"
                 },
                 {
                     "filename": "flink-conf/log4j.properties",
@@ -822,9 +789,21 @@
                     "sourceFilename": "aux/defaults/log4j-session.properties"
                 },
                 {
-                    "filename": "flink-conf/log4j-yarn-session.properties",
-                    "sourceFilename": "aux/defaults/log4j-yarn-session.properties"
-                }
+                    "filename": "flink-conf/log4j-cli.properties",
+                    "sourceFilename": "aux/defaults/log4j-cli.properties"
+                },
+                 {
+                     "filename": "flink-conf/logback.xml",
+                     "sourceFilename": "aux/defaults/logback.xml"
+                 },
+                 {
+                     "filename": "flink-conf/logback-console.xml",
+                     "sourceFilename": "aux/defaults/logback-console.xml"
+                 },
+                 {
+                     "filename": "flink-conf/logback-session.xml",
+                     "sourceFilename": "aux/defaults/logback-session.xml"
+                 }
             ]
         },
         "logging": {
